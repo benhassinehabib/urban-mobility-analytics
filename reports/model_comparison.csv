@@ -1,0 +1,5 @@
+City,Model,MAE,RMSE,R2
+Washington DC,Linear Regression,137.63,181.22,0.3244
+Washington DC,Random Forest,45.47,69.95,0.8993
+Seoul,Linear Regression,334.35,458.62,0.4409
+Seoul,Random Forest,216.91,313.77,0.7383
