@@ -696,8 +696,8 @@ with tab_compare:
             <li><b>Washington DC scores higher.</b> Its demand is dominated by
                 regular commuting hours, which are easy to learn.</li>
             <li><b>Seoul is harder.</b> Its test period (19 Sep – 30 Nov 2018)
-                includes months never seen in training and most of the hours
-                when the system was shut down.</li>
+                includes October and November, months never seen
+                in training.</li>
             <li><b>Don't compare MAE or RMSE across cities</b> — the two systems
                 have very different demand scales.</li>
           </ul>

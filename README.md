@@ -188,10 +188,7 @@ The Washington DC model achieved an R² score of **0.8993**, demonstrating stron
 
 The Seoul model achieved an R² score of **0.7383**. The model provides a reasonable level of predictive performance, although demand is harder to predict than in Washington DC. The most important features are **temperature (0.38)**, hour of day (0.29) and solar radiation (0.09): demand in Seoul is driven more by weather.
 
-Two properties of the Seoul test period help explain the lower score:
-
-- It covers **October and November**, months that never appear in the training data (the dataset spans only one year).
-- It contains **223 of the 295 hours** in which the bike system was not operating (zero rentals), while only 72 such hours are in the training data.
+The lower Seoul score is mainly explained by its test period (19 Sep – 30 Nov 2018), which contains **October and November**, months that never appear in the training data (the dataset spans only one year). The model underestimates autumn demand by about 90 rentals per hour on average.
 
 ### Interpretation
 
