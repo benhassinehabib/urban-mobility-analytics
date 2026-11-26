@@ -3,30 +3,33 @@
 
 A machine learning project that analyzes and predicts bike-sharing demand using weather conditions and temporal features. The project compares bike rental demand patterns and prediction performance across two cities: **Washington DC** and **Seoul**.
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit&logoColor=white)
 ![Scikit--learn](https://img.shields.io/badge/Scikit--learn-Machine_Learning-orange?logo=scikitlearn&logoColor=white)
 ![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange?logo=jupyter&logoColor=white)
 
-The application provides an interactive dashboard built with Streamlit, allowing users to explore model performance, adjust weather and time conditions, and generate bike demand predictions.
+The application provides an interactive dashboard built with Streamlit, allowing users to adjust weather and time conditions, see live bike demand predictions, and explore model performance.
 
 ---
 
 **Project Type:** Individual MSc Project  
 **Domain:** Machine Learning · Urban Mobility · Data Analytics  
-**Models:** Random Forest Regression  
+**Models:** Random Forest Regression (with a Linear Regression baseline)
 **Cities:** Washington DC 🇺🇸 · Seoul 🇰🇷
+## Dashboard Preview
+
+![Urban Mobility Analytics dashboard](screenshots/dashboard_header.png)
 
 ## Table of Contents
 
 - [Project Objectives](#project-objectives)
+- [Dashboard Preview](#dashboard-preview)
 - [Datasets](#datasets)
 - [Technologies & Tools](#technologies--tools)
 - [Machine Learning Methodology](#machine-learning-methodology)
 - [Model Results & Performance](#model-results--performance)
 - [Project Structure](#project-structure)
 - [Dashboard Features](#dashboard-features)
-- [Dashboard Preview](#dashboard-preview)
 - [Installation & Setup](#installation--setup)
 - [Usage Guide](#usage-guide)
 - [Limitations & Future Improvements](#limitations--future-improvements)
@@ -62,6 +65,10 @@ The Washington DC dataset contains bike-sharing rental information, including te
 
 **Target variable:** Bike rental demand (`cnt`)
 
+**Period:** hourly records, 1 January 2011 – 31 December 2012 (17,379 rows)
+
+**Source:** [UCI Machine Learning Repository — Bike Sharing Dataset](https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset) (Fanaee-T & Gama, 2013). The `casual` and `registered` columns are removed before training because they add up to the target.
+
 ### 2. Seoul — Seoul Bike Sharing
 
 The Seoul dataset contains bike rental records combined with weather conditions and temporal information.
@@ -77,10 +84,14 @@ The Seoul dataset contains bike rental records combined with weather conditions 
 - Rainfall and snowfall
 - Weekday
 - Holiday information
-- Working-day information
+- Functioning day (whether the bike system was operating; rentals are always 0 when it was not)
 - Seasonal information
 
 **Target variable:** Bike rental demand (`Rented Bike Count`)
+
+**Period:** hourly records, 1 December 2017 – 30 November 2018 (8,760 rows)
+
+**Source:** [UCI Machine Learning Repository — Seoul Bike Sharing Demand](https://archive.ics.uci.edu/dataset/560/seoul+bike+sharing+demand) (Sathishkumar V E, Park & Cho, 2020).
 
 ### Dataset Comparison
 
@@ -100,8 +111,8 @@ The two datasets allow the project to explore bike-sharing demand in different u
 - **Joblib** — Saving and loading trained machine learning models.
 
 ### Data Visualization
-- **Matplotlib** — Data visualization and analytical plots.
-- **Streamlit charts** — Interactive visualizations within the dashboard.
+- **Matplotlib & Seaborn** — Exploratory plots in the notebook.
+- **Altair** — Interactive charts in the dashboard.
 
 ### Web Application
 - **Streamlit** — Development of the interactive dashboard for predictions, model evaluation, and city comparison.
@@ -127,21 +138,33 @@ Additional features are used to capture demand patterns, including:
 - Seasonal information
 - Weather-related variables such as temperature, humidity, wind speed, and precipitation
 
-### 3. Model Training
+### 3. Train/Test Split
 
-A **Random Forest Regressor** is used to train separate prediction models for Washington DC and Seoul. The models learn relationships between weather conditions, temporal patterns, and bike rental demand.
+Each dataset is sorted by date and hour and split **chronologically**: the first 80% of the timeline is used for training and the most recent 20% for testing. This mimics real forecasting (the model never sees "future" data) and avoids the overly optimistic scores of a random split on time-series data.
 
-### 4. Model Evaluation
+| City | Training rows | Test rows | Test period |
+|---|---:|---:|---|
+| Washington DC | 13,903 | 3,476 | 7 Aug 2012 – 31 Dec 2012 |
+| Seoul | 7,008 | 1,752 | 19 Sep 2018 – 30 Nov 2018 |
 
-The trained models are evaluated using three regression metrics:
+### 4. Model Training
+
+Two models are trained separately for each city:
+
+- **Linear Regression** — a simple baseline.
+- **Random Forest Regressor** (100 trees, `random_state=42`) — the main model, able to capture non-linear patterns such as commuting peaks.
+
+### 5. Model Evaluation
+
+The trained models are evaluated on the test set using three regression metrics:
 
 - **R² Score:** Measures how well the model explains the variation in bike rental demand.
 - **Mean Absolute Error (MAE):** Measures the average absolute difference between predicted and actual rental values.
 - **Root Mean Squared Error (RMSE):** Measures prediction error while giving greater weight to larger errors.
 
-### 5. Model Deployment
+### 6. Model Deployment
 
-The trained models are saved using Joblib and integrated into a Streamlit application. Users can select a city, adjust temporal and weather conditions, and obtain predicted bike-sharing demand through the interactive dashboard.
+All steps are scripted in `src/train.py`. The trained models are saved using Joblib (compressed) and integrated into a Streamlit application. Users can select a city, adjust temporal and weather conditions, and obtain predicted bike-sharing demand through the interactive dashboard.
 
 ## Model Results & Performance
 
@@ -149,18 +172,27 @@ The performance of the Random Forest models was evaluated using R², Mean Absolu
 
 ### Performance Summary
 
-| City | R² Score | MAE | RMSE |
-|---|---:|---:|---:|
-| Washington DC | 0.8993 | 45.47 | 69.95 |
-| Seoul | 0.7383 | 216.91 | 313.77 |
+| City | Model | R² Score | MAE | RMSE |
+|---|---|---:|---:|---:|
+| Washington DC | Linear Regression (baseline) | 0.3244 | 137.63 | 181.22 |
+| Washington DC | **Random Forest** | **0.8993** | **45.47** | **69.95** |
+| Seoul | Linear Regression (baseline) | 0.4409 | 334.35 | 458.62 |
+| Seoul | **Random Forest** | **0.7383** | **216.91** | **313.77** |
+
+Random Forest clearly outperforms the linear baseline in both cities.
 
 ### Washington DC
 
-The Washington DC model achieved an R² score of **0.8993**, demonstrating strong predictive performance. The model captures the relationship between temporal patterns, weather conditions, and bike rental demand with relatively low prediction errors.
+The Washington DC model achieved an R² score of **0.8993**, demonstrating strong predictive performance. The most important features are **hour of day (0.60)**, feels-like temperature (0.08) and temperature (0.08): demand in Washington DC is dominated by regular commuting patterns.
 
 ### Seoul
 
-The Seoul model achieved an R² score of **0.7383**. The model provides a reasonable level of predictive performance, although bike rental demand appears more difficult to predict accurately compared with the Washington DC dataset.
+The Seoul model achieved an R² score of **0.7383**. The model provides a reasonable level of predictive performance, although demand is harder to predict than in Washington DC. The most important features are **temperature (0.38)**, hour of day (0.29) and solar radiation (0.09): demand in Seoul is driven more by weather.
+
+Two properties of the Seoul test period help explain the lower score:
+
+- It covers **October and November**, months that never appear in the training data (the dataset spans only one year).
+- It contains **223 of the 295 hours** in which the bike system was not operating (zero rentals), while only 72 such hours are in the training data.
 
 ### Interpretation
 
@@ -181,6 +213,9 @@ Urban-Mobility-Analytics/
 │   │   └── SeoulBikeData.csv
 │   └── processed/
 │
+├── src/
+│   └── train.py
+│
 ├── notebooks/
 │   └── 01_data_understanding.ipynb
 │
@@ -191,17 +226,21 @@ Urban-Mobility-Analytics/
 ├── reports/
 │   ├── washington_feature_importance.csv
 │   ├── seoul_feature_importance.csv
-│   └── model_comparaisation.csv
+│   └── model_comparison.csv
 │
 ├── screenshots/
+│   ├── dashboard_header.png
+│   ├── demand_prediction.png
 │   ├── overview.png
 │   ├── overview_details.png
-│   ├── demand_prediction.png
 │   ├── city_comparison.png
 │   └── comparison_details.png
 │
 ├── dashboard/
 │   └── app.py
+│
+├── .streamlit/
+│   └── config.toml
 │
 ├── README.md
 └── requirements.txt
@@ -210,57 +249,47 @@ Urban-Mobility-Analytics/
 ### Directory Description
 
 - **data/raw/** — Contains the original datasets (`hour.csv` and `SeoulBikeData.csv`).
-- **data/processed/** — Stores datasets after preprocessing and preparation, if generated.
+- **data/processed/** — Reserved for preprocessed datasets (empty by default).
+- **src/train.py** — Reproducible pipeline: data cleaning, feature engineering, chronological split, training, evaluation, and saving of models and reports.
 - **notebooks/** — Contains notebooks used for exploratory data analysis and experimentation.
-- **models/** — Stores the trained Random Forest models for Washington DC and Seoul.
+- **models/** — Stores the trained Random Forest models for Washington DC and Seoul (regenerate with `python src/train.py`).
 - **reports/** — Contains model comparison results and feature importance reports.
 - **dashboard/** — Contains the Streamlit application.
+- **.streamlit/config.toml** — Dashboard colour theme.
 - **README.md** — Provides project documentation.
 - **requirements.txt** — Lists the Python dependencies required to run the project.
 
 ## Dashboard Features
 
-The project includes an interactive dashboard developed with Streamlit that allows users to explore bike-sharing demand, analyze model performance, and generate predictions based on weather and temporal conditions.
-
-### Overview
-
-- View the selected city's model performance.
-- Explore R², MAE, and RMSE metrics.
-- Visualize feature importance for the selected city.
-- Understand the project's objectives and prediction approach.
+The interactive Streamlit dashboard uses a dark theme that matches the project presentation (`.streamlit/config.toml`). It has three tabs.
 
 ### Demand Prediction
 
-Users can interact with prediction models by selecting different conditions.
+Users describe a scenario and the prediction **updates instantly** as they move the sliders.
+
+**Both cities (sidebar):** city, year, month, day of week and hour. The season is derived from the month. Only years covered by each city's training data can be selected, because Random Forest models cannot extrapolate to later years.
 
 **Washington DC:**
-- Select year, month, hour, and season.
-- Adjust temperature and feels-like temperature.
-- Set humidity and wind speed.
-- Select weather conditions.
-- Specify weekday, working day, and holiday information.
+- Temperature and feels-like temperature (°C), humidity (%), wind speed (km/h) — converted internally to the dataset's normalised scale.
+- Weather situation and public holiday; the working-day flag is derived from weekday and holiday, as in the original dataset.
 
 **Seoul:**
-- Select year, month, and hour.
-- Adjust temperature, humidity, wind speed, and visibility.
-- Set dew point temperature and solar radiation.
-- Specify rainfall and snowfall.
-- Configure weekday, holiday, and working-day information.
+- Temperature, humidity, wind speed and rainfall, plus visibility, dew point, solar radiation and snowfall under "More weather conditions".
+- Public holiday and whether the bike system is operating (if not, the dashboard returns 0 rentals, matching the data).
 
-The dashboard generates a predicted bike rental demand based on the selected input conditions.
+The result card shows the estimated rentals for that hour and compares it with the **historical average for the same hour** (for example, "▲ 79% vs a typical 08:00"). A chart shows the average daily demand curve with the scenario highlighted.
+
+### Model Overview
+
+- R², MAE and RMSE of the selected city's Random Forest on the test period.
+- The Linear Regression baseline and the improvement over it.
+- A chart of the top 10 features by importance, with readable feature names.
 
 ### City Comparison
 
-The City Comparison section allows users to compare Washington DC and Seoul in terms of model performance.
-
-- Compare model R² scores.
-- View performance metrics for both cities.
-- Explore differences in model predictive performance.
-- Understand why evaluation errors should be interpreted according to each dataset's demand scale.
-
-### Interactive User Interface
-
-The dashboard provides an intuitive interface with city selection, input controls, interactive charts, metric cards, and organized tabs to make machine learning predictions accessible to users without requiring direct interaction with the underlying Python code.
+- Grouped bar chart of R² for Random Forest and Linear Regression in both cities.
+- An interpretation of the differences between the cities.
+- A full results table, loaded from `reports/model_comparison.csv`.
 
 ## Installation & Setup
 
@@ -269,8 +298,8 @@ Follow these steps to run Urban Mobility Analytics locally.
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/Urban-Mobility-Analytics.git
-cd Urban-Mobility-Analytics
+git clone https://github.com/benhassinehabib/urban-mobility-analytics.git
+cd urban-mobility-analytics
 ```
 
 ### 2. Create a Virtual Environment
@@ -297,7 +326,15 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Run the Dashboard
+### 4. Train the Models
+
+```bash
+python src/train.py
+```
+
+This rebuilds both models and all files in `reports/` from the raw data in about 10 seconds, and prints the evaluation results.
+
+### 5. Run the Dashboard
 
 ```bash
 streamlit run dashboard/app.py
@@ -311,45 +348,19 @@ http://localhost:8501
 
 ### Requirements
 
-- Python 3.9 or newer
+- Python 3.10 or newer
 - pip
 - Git
 - A web browser
 
 ## Usage Guide
 
-After launching the application, users can interact with the Urban Mobility Analytics dashboard through its different sections.
+1. **Choose a scenario in the sidebar:** city, year, month, day of week and hour.
+2. **Demand Prediction tab:** adjust the weather conditions. The estimated demand and the comparison with a typical day update immediately.
+3. **Model Overview tab:** see how accurate the selected city's model is and which features drive its predictions.
+4. **City Comparison tab:** compare both cities and both models.
 
-### 1. Select a City
-
-Use the sidebar to select the city you want to analyze:
-
-- Washington DC
-- Seoul
-
-The dashboard automatically loads the corresponding trained model and performance metrics.
-
-### 2. Explore the Overview
-
-The Overview tab provides a summary of the selected city, including model performance metrics, feature importance visualization, and project information.
-
-### 3. Generate a Demand Prediction
-
-Navigate to the **Demand Prediction** tab and configure the input parameters according to your selected city.
-
-Adjust temporal variables such as year, month, and hour, together with weather conditions such as temperature, humidity, wind speed, and other relevant environmental variables.
-
-Click the prediction button to generate an estimated bike rental demand.
-
-### 4. Compare Cities
-
-Navigate to the **City Comparison** tab to explore and compare the model performance of Washington DC and Seoul.
-
-The comparison helps users understand the differences in predictive performance between the two bike-sharing systems.
-
-### 5. Interpret the Results
-
-The prediction represents an estimated bike rental demand based on the selected input conditions and the patterns learned by the trained machine learning model. It should be interpreted as a model estimate rather than a guaranteed real-world rental count.
+Predictions are estimates based on historical patterns learned from the training data. They are not guaranteed rental counts.
 
 ## Limitations & Future Improvements
 
@@ -363,6 +374,7 @@ Despite achieving promising results, the project has several limitations:
 - **Weather variability:** Sudden weather changes and extreme conditions may affect actual rental demand differently from the patterns learned during training.
 - **Temporal limitations:** Historical temporal patterns may not accurately reflect future changes in user behavior, transportation infrastructure, or mobility trends.
 - **No real-time data integration:** The application currently relies on manually selected input conditions rather than live weather information or real-time bike-sharing data.
+- **Fixed time range:** The models only know the years in their training data (2011–2012 for Washington DC, Dec 2017 – Nov 2018 for Seoul). Predicting recent years requires retraining on recent data, which `src/train.py` makes straightforward.
 
 ### Future Improvements
 
@@ -370,6 +382,7 @@ Potential improvements to the project include:
 
 - **Model optimization:** Experiment with additional algorithms such as Gradient Boosting, XGBoost, LightGBM, and other regression techniques.
 - **Hyperparameter tuning:** Optimize Random Forest parameters to improve predictive performance.
+- **Retraining on recent data:** Both bike-sharing systems publish newer data; retraining with the existing pipeline would produce up-to-date models.
 - **Real-time data integration:** Connect the dashboard to live weather APIs and bike-sharing data sources.
 - **Advanced feature engineering:** Incorporate additional features such as public events, traffic conditions, holidays, and special occasions.
 - **Time-series forecasting:** Explore time-series models to capture temporal dependencies and long-term demand patterns.
@@ -386,26 +399,24 @@ The project also provides an interactive Streamlit dashboard that enables users 
 
 Overall, this project demonstrates the potential of machine learning and data analytics in supporting urban mobility analysis and providing insights that could contribute to smarter, more data-driven transportation systems.
 
-## Dashboard Preview
-
-### Overview
-
-The overview page provides a summary of the selected city, model performance metrics, feature importance, and the main factors influencing bike-sharing demand.
-
-![Dashboard Overview](screenshots/overview.png)
-
-![Feature Importance and Project Information](screenshots/overview_details.png)
-
 ### Demand Prediction
 
-The prediction interface allows users to adjust weather and calendar conditions and generate bike rental demand estimates using the trained Random Forest model.
+Adjust the weather and time conditions; the estimate updates instantly and is compared with a typical day.
 
 ![Bike Demand Prediction](screenshots/demand_prediction.png)
 
+### Model Overview
+
+Model performance against the baseline and the main drivers of demand.
+
+![Model Overview](screenshots/overview.png)
+
+![Feature Importance](screenshots/overview_details.png)
+
 ### City Comparison
 
-The city comparison page presents model performance metrics for Washington DC and Seoul, including an R² score comparison.
+Random Forest vs Linear Regression in both cities, with an interpretation and the full results table.
 
 ![City Model Comparison](screenshots/city_comparison.png)
 
-![R2 Score Comparison and Interpretation](screenshots/comparison_details.png)
+![Results Table and Interpretation](screenshots/comparison_details.png)
