@@ -12,24 +12,23 @@ The application provides an interactive dashboard built with Streamlit, allowing
 
 ---
 
-**Project Type:** Individual MSc Project  
-**Domain:** Machine Learning · Urban Mobility · Data Analytics  
-**Models:** Random Forest Regression (with a Linear Regression baseline)
+**Project Type:** Individual MSc Project\
+**Domain:** Machine Learning · Urban Mobility · Data Analytics\
+**Models:** Random Forest Regression (with a Linear Regression baseline)\
 **Cities:** Washington DC 🇺🇸 · Seoul 🇰🇷
-## Dashboard Preview
 
 ![Urban Mobility Analytics dashboard](screenshots/dashboard_header.png)
 
 ## Table of Contents
 
 - [Project Objectives](#project-objectives)
-- [Dashboard Preview](#dashboard-preview)
 - [Datasets](#datasets)
 - [Technologies & Tools](#technologies--tools)
 - [Machine Learning Methodology](#machine-learning-methodology)
 - [Model Results & Performance](#model-results--performance)
 - [Project Structure](#project-structure)
 - [Dashboard Features](#dashboard-features)
+- [Dashboard Preview](#dashboard-preview)
 - [Installation & Setup](#installation--setup)
 - [Usage Guide](#usage-guide)
 - [Limitations & Future Improvements](#limitations--future-improvements)
@@ -42,7 +41,7 @@ The main objectives of this project are:
 - Analyze bike-sharing demand using weather-related and temporal data.
 - Explore the relationship between environmental conditions and bike rental behavior.
 - Develop machine learning models to predict bike-sharing demand.
-- Train and evaluate Random Forest regression models for Washington DC and Seoul.
+- Train and evaluate Random Forest regression models for Washington DC and Seoul, compared against a Linear Regression baseline.
 - Compare the predictive performance of the models using R², Mean Absolute Error (MAE), and Root Mean Squared Error (RMSE).
 - Identify the most influential features affecting bike rental demand.
 - Develop an interactive dashboard that allows users to explore conditions and generate demand predictions.
@@ -205,7 +204,7 @@ The results demonstrate the potential of weather and temporal information for pr
 The project is organized into directories for datasets, notebooks, trained models, reports, and the interactive dashboard.
 
 ```text
-Urban-Mobility-Analytics/
+urban-mobility-analytics/
 │
 ├── data/
 │   ├── raw/
@@ -290,6 +289,30 @@ The result card shows the estimated rentals for that hour and compares it with t
 - Grouped bar chart of R² for Random Forest and Linear Regression in both cities.
 - An interpretation of the differences between the cities.
 - A full results table, loaded from `reports/model_comparison.csv`.
+
+## Dashboard Preview
+
+### Demand Prediction
+
+Adjust the weather and time conditions; the estimate updates instantly and is compared with a typical day.
+
+![Bike Demand Prediction](screenshots/demand_prediction.png)
+
+### Model Overview
+
+Model performance against the baseline and the main drivers of demand.
+
+![Model Overview](screenshots/overview.png)
+
+![Feature Importance](screenshots/overview_details.png)
+
+### City Comparison
+
+Random Forest vs Linear Regression in both cities, with an interpretation and the full results table.
+
+![City Model Comparison](screenshots/city_comparison.png)
+
+![Results Table and Interpretation](screenshots/comparison_details.png)
 
 ## Installation & Setup
 
@@ -398,25 +421,3 @@ Random Forest regression models were developed for both cities and evaluated usi
 The project also provides an interactive Streamlit dashboard that enables users to explore model performance, investigate feature importance, compare cities, and generate predictions under different conditions.
 
 Overall, this project demonstrates the potential of machine learning and data analytics in supporting urban mobility analysis and providing insights that could contribute to smarter, more data-driven transportation systems.
-
-### Demand Prediction
-
-Adjust the weather and time conditions; the estimate updates instantly and is compared with a typical day.
-
-![Bike Demand Prediction](screenshots/demand_prediction.png)
-
-### Model Overview
-
-Model performance against the baseline and the main drivers of demand.
-
-![Model Overview](screenshots/overview.png)
-
-![Feature Importance](screenshots/overview_details.png)
-
-### City Comparison
-
-Random Forest vs Linear Regression in both cities, with an interpretation and the full results table.
-
-![City Model Comparison](screenshots/city_comparison.png)
-
-![Results Table and Interpretation](screenshots/comparison_details.png)
