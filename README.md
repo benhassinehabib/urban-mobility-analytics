@@ -4,8 +4,8 @@
 A machine learning project that analyzes and predicts bike-sharing demand using weather conditions and temporal features. The project compares bike rental demand patterns and prediction performance across two cities: **Washington DC** and **Seoul**.
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-red?logo=streamlit&logoColor=white)
-![Scikit--learn](https://img.shields.io/badge/Scikit--learn-Machine_Learning-orange?logo=scikitlearn&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B?logo=streamlit&logoColor=white)
+![scikit-learn](https://img.shields.io/badge/scikit--learn-Machine%20Learning-F7931E?logo=scikitlearn&logoColor=white)
 ![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange?logo=jupyter&logoColor=white)
 
 The application provides an interactive dashboard built with Streamlit, allowing users to adjust weather and time conditions, see live bike demand predictions, and explore model performance.
